@@ -102,7 +102,7 @@ try:
             "macos"
         ):
             if os_is_64_bit:
-                if machine() == "amd64":
+                if machine() == "arm64":
                     libfile = os.path.join(pathlib, "cbc-c-darwin-aarch64.dylib")
                 else:
                     libfile = os.path.join(pathlib, "cbc-c-darwin-x86-64.dylib")
