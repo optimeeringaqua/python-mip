@@ -3,6 +3,7 @@
 import logging
 from typing import Dict, List, Tuple, Optional, Union
 from sys import platform, maxsize
+from platform import machine
 from os.path import dirname, isfile, exists
 import os
 import multiprocessing as multip
@@ -70,12 +71,15 @@ try:
     else:
         if "linux" in platform.lower():
             if os_is_64_bit:
-                pathlibe = pathlib
-                libfile = os.path.join(pathlib, "cbc-c-linux-x86-64.so")
-                if not exists(libfile):
+                if machine() == "aarch64":
+                    libfile = os.path.join(pathlib, "cbc-c-linux-aarch64.so")
+                else:
                     pathlibe = pathlib
                     libfile = os.path.join(pathlib, "cbc-c-linux-x86-64.so")
-                pathlib = pathlibe
+                    if not exists(libfile):
+                        pathlibe = pathlib
+                        libfile = os.path.join(pathlib, "cbc-c-linux-x86-64.so")
+                    pathlib = pathlibe
             else:
                 raise NotImplementedError("Linux 32 bits platform not supported.")
         elif platform.lower().startswith("win"):
@@ -98,7 +102,10 @@ try:
             "macos"
         ):
             if os_is_64_bit:
-                libfile = os.path.join(pathlib, "cbc-c-darwin-x86-64.dylib")
+                if machine() == "amd64":
+                    libfile = os.path.join(pathlib, "cbc-c-darwin-aarch64.dylib")
+                else:
+                    libfile = os.path.join(pathlib, "cbc-c-darwin-x86-64.dylib")
         if not libfile:
             raise NotImplementedError("You operating system/platform is not supported")
     old_dir = os.getcwd()
